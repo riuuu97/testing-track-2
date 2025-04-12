@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pelacak Lokasi Pengguna</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
+    #status {
+      margin-top: 20px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <h2>Izinkan Lokasi</h2>
+  <p>Website ini akan mengakses dan mengirimkan lokasi Anda ke server.</p>
+  <button onclick="kirimLokasi()">Bagikan Lokasi</button>
+  <div id="status"></div>
+
+  <script>
+    // Konfigurasi Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyCjPH0puSnFDDDwSBgV1jZG6ClvJXzRXS0",
+      authDomain: "testing-fb524.firebaseapp.com",
+      databaseURL: "https://testing-fb524-default-rtdb.firebaseio.com",
+      projectId: "testing-fb524",
+      storageBucket: "testing-fb524.firebasestorage.app",
+      messagingSenderId: "925513103293",
+      appId: "1:925513103293:web:d9ced0b5f16a85882c84d4",
+      measurementId: "G-7QV75P4VX1"
+    };
+
+    // Inisialisasi Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function kirimLokasi() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          const latitude = pos.coords.latitude;
+          const longitude = pos.coords.longitude;
+          const timestamp = new Date().toISOString();
+
+          const lokasiRef = db.ref("lokasiPengguna").push();
+          lokasiRef.set({
+            latitude,
+            longitude,
+            timestamp
+          });
+
+          document.getElementById("status").textContent = "Lokasi berhasil dikirim.";
+        }, err => {
+          document.getElementById("status").textContent = "Gagal mengambil lokasi: " + err.message;
+        });
+      } else {
+        document.getElementById("status").textContent = "Geolocation tidak didukung oleh browser Anda.";
+      }
+    }
+  </script>
+</body>
+</html>
